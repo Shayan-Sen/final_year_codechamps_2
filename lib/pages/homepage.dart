@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
       appBar: JycAppbar(data: "Final Year CodeChamps"),
       body: Center(
         child: Text(
-          "Welcome to Home Page of final year \n codechamps",
+          "Welcome to Home Page of final year \n codechamps \n\n Kaioken Times 20 !!!! ",
           style: TextStyle(fontSize: 19),
         ),
       ),
