@@ -1,6 +1,6 @@
-# final_year_codechamps_2
+# final_year_codechamps
 
-A new Flutter project.
+My Final Year Project
 
 ## Getting Started
 
