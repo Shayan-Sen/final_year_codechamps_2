@@ -1,4 +1,5 @@
 import 'package:final_year_codechamps_2/pages/homepage.dart';
+import 'package:final_year_codechamps_2/widgets/jycloginformfield.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,10 +11,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        color: Colors.green,
         alignment: Alignment.center,
         child: Form(
           key: _formKey,
@@ -21,7 +33,17 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextFormField(),
+              JYCLoginFormField(
+                hintText: "Enter your Username",
+                labelText: "Username",
+                controller: _emailController,
+              ),
+              JYCLoginFormField(
+                hintText: "Enter your Password",
+                labelText: "Password",
+                obscureText: true,
+                controller: _passwordController,
+              ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacement(
