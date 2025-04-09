@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
                   );
