@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1036963134991",
+    "project_id": "finalyear-codechamps",
+    "storage_bucket": "finalyear-codechamps.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036963134991:android:d7f5903a05c0d0d4a22d7a",
+        "android_client_info": {
+          "package_name": "com.example.final_year_codechamps_2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJiM0FdrH46f7jMSbbaN_2-6qBVQnSoZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
