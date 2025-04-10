@@ -1,3 +1,4 @@
+import 'package:final_year_codechamps_2/pages/chatpage.dart';
 import 'package:final_year_codechamps_2/pages/loginpage.dart';
 import 'package:final_year_codechamps_2/widgets/jycappbar.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,11 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: JycAppbar(data: "Final Year CodeChamps"),
+      appBar: JycAppbar(data: "Final Year CodeChamps",actions: [
+        ElevatedButton(onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage()));
+        }, child: Text("ChatPage"))
+      ],),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -37,19 +37,44 @@ class _LoginPageState extends State<LoginPage> {
                 hintText: "Enter your Username",
                 labelText: "Username",
                 controller: _emailController,
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please enter your email";
+                  }
+                  return null;
+                },
               ),
               JYCLoginFormField(
                 hintText: "Enter your Password",
                 labelText: "Password",
                 obscureText: true,
                 controller: _passwordController,
+                validator: (String? value) {
+                  if (value == null || value.isEmpty ) {
+                    return "Please enter your password";
+                  }
+                  return null;
+                },
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
+                  if (_formKey.currentState!.validate()) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Email: ${_emailController.text}   Password: ${_passwordController.text}"),
+                      ),
+                    );
+                  }else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Please fill all the fields"),
+                      ),
+                    );
+                  }
                 },
                 child: Text("Home Page"),
               ),
