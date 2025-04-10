@@ -10,11 +10,26 @@ class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: JycAppbar(data: "Chat Page"),
-    body: LlmChatView(
-      provider: GeminiProvider(
-        model: GenerativeModel(
-          model: 'gemini-2.0-flash',
-          apiKey: 'AIzaSyBfpGQmKYu7eD89E22QWEARNy67HCRCkb0',
+    body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.blue,
+            Colors.white,
+          ],
+        ),
+      ),
+      child: LlmChatView(
+        style: LlmChatViewStyle(
+          backgroundColor: Colors.black38
+        ),
+        provider: GeminiProvider(
+          model: GenerativeModel(
+            model: 'gemini-2.0-flash',
+            apiKey: 'AIzaSyBfpGQmKYu7eD89E22QWEARNy67HCRCkb0',
+          ),
         ),
       ),
     ),

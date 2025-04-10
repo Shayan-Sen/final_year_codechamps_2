@@ -10,7 +10,7 @@ class JycAppbar extends StatelessWidget implements PreferredSizeWidget{
     return AppBar(
       centerTitle: true,
       foregroundColor: Colors.white,
-      backgroundColor: Colors.blue,
+      backgroundColor: Color(0xFF001B4D),
       shadowColor: Colors.black,
       elevation: 4,
       title: Text(data),
