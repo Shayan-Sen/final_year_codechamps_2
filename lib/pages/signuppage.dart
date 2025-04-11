@@ -1,16 +1,15 @@
-import 'package:final_year_codechamps_2/pages/homepage.dart';
-import 'package:final_year_codechamps_2/pages/signuppage.dart';
+import 'package:final_year_codechamps_2/pages/loginpage.dart';
 import 'package:final_year_codechamps_2/widgets/jycloginformfield.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -35,24 +34,37 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               JYCLoginFormField(
-                hintText: "Enter your Username",
+                hintText: "Enter a valid Email or Ph.No for Username",
                 labelText: "Username",
                 controller: _emailController,
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter your email";
+                    return "Please enter a valid username";
                   }
                   return null;
                 },
               ),
               JYCLoginFormField(
-                hintText: "Enter your Password",
+                hintText: "Enter a valid Password",
                 labelText: "Password",
                 obscureText: true,
                 controller: _passwordController,
                 validator: (String? value) {
-                  if (value == null || value.isEmpty ) {
-                    return "Please enter your password";
+                  if (value == null || value.isEmpty) {
+                    return "Please enter a valid password";
+                  }
+                  return null;
+                },
+              ),
+              JYCLoginFormField(
+                hintText: "Confirm your Password",
+                labelText: "Confirm Password",
+                obscureText: true,
+                validator: (String? value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      value != _passwordController.text) {
+                    return "Your password doesn't match";
                   }
                   return null;
                 },
@@ -62,36 +74,35 @@ class _LoginPageState extends State<LoginPage> {
                   if (_formKey.currentState!.validate()) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => LoginPage()),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Email: ${_emailController.text}   Password: ${_passwordController.text}"),
-                      ),
+                      SnackBar(content: Text("Signup Successful")),
                     );
-                  }else{
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Please fill all the fields"),
-                      ),
+                      SnackBar(content: Text("Please fill all the fields")),
                     );
                   }
                 },
-                child: Text("Home Page"),
+                child: Text("Submit"),
               ),
-              SizedBox(height: 30,),
+              SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?"),
-                  TextButton(onPressed: (){
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignupPage()),
-                    );
-                  }, child: Text("Sign Up"))
+                  Text("Already have an account?"),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
+                    child: Text("Login"),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
