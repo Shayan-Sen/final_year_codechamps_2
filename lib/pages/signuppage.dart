@@ -81,11 +81,11 @@ class _SignupPageState extends State<SignupPage> {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Please fill all the fields")),
+                      SnackBar(content: Text("Please fill all the fields properly")),
                     );
                   }
                 },
-                child: Text("Submit"),
+                child: Text("SignUp"),
               ),
               SizedBox(height: 30),
               Row(

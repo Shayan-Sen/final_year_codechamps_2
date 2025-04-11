@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   }
                 },
-                child: Text("Home Page"),
+                child: Text("Login"),
               ),
               SizedBox(height: 30,),
               Row(
