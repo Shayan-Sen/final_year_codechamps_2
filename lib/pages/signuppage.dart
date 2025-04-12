@@ -25,7 +25,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.green.shade200,
+        color: Colors.blue.shade100,
         alignment: Alignment.center,
         child: Form(
           key: _formKey,
@@ -33,6 +33,12 @@ class _SignupPageState extends State<SignupPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Expanded(flex:1,child: SizedBox()),
+              Text(
+                "Smart Tutor",
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+              Expanded(flex: 3,child: SizedBox()),
               JYCLoginFormField(
                 hintText: "Enter a valid Email or Ph.No for Username",
                 labelText: "Username",
@@ -87,7 +93,7 @@ class _SignupPageState extends State<SignupPage> {
                 },
                 child: Text("SignUp"),
               ),
-              SizedBox(height: 30),
+              Expanded(flex:3,child: SizedBox()),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -101,8 +107,10 @@ class _SignupPageState extends State<SignupPage> {
                     },
                     child: Text("Login"),
                   ),
+
                 ],
               ),
+              Expanded(flex:1,child: SizedBox()),
             ],
           ),
         ),

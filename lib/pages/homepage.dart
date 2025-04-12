@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: JycAppbar(data: "Final Year CodeChamps",actions: [
+      appBar: JycAppbar(data: "Smart Tutor",actions: [
         ElevatedButton(onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage()));
         }, child: Text("ChatPage"))

@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.green.shade200,
+        color: Colors.blue.shade100,
         alignment: Alignment.center,
         child: Form(
           key: _formKey,
@@ -34,6 +34,12 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Expanded(flex: 1, child: SizedBox()),
+              Text(
+                "Smart Tutor",
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+              Expanded(flex: 3, child: SizedBox()),
               JYCLoginFormField(
                 hintText: "Enter your Username",
                 labelText: "Username",
@@ -51,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
                 controller: _passwordController,
                 validator: (String? value) {
-                  if (value == null || value.isEmpty ) {
+                  if (value == null || value.isEmpty) {
                     return "Please enter your password";
                   }
                   return null;
@@ -66,32 +72,36 @@ class _LoginPageState extends State<LoginPage> {
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("Email: ${_emailController.text}   Password: ${_passwordController.text}"),
+                        content: Text(
+                          "Email: ${_emailController.text}   Password: ${_passwordController.text}",
+                        ),
                       ),
                     );
-                  }else{
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Please fill all the fields"),
-                      ),
+                      SnackBar(content: Text("Please fill all the fields")),
                     );
                   }
                 },
                 child: Text("Login"),
               ),
-              SizedBox(height: 30,),
+              Expanded(flex: 3, child: SizedBox()),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text("Don't have an account?"),
-                  TextButton(onPressed: (){
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignupPage()),
-                    );
-                  }, child: Text("Sign Up"))
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignupPage()),
+                      );
+                    },
+                    child: Text("Sign Up"),
+                  ),
                 ],
-              )
+              ),
+              Expanded(flex: 1, child: SizedBox()),
             ],
           ),
         ),
