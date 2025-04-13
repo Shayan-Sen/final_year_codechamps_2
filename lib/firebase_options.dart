@@ -50,23 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBHmqDvonXQ0Q06Wxyyfr1vPWk2kEnjU0s',
-    appId: '1:1098873194803:web:c683feea3df0208dc55646',
-    messagingSenderId: '1098873194803',
-    projectId: 'face-recognition2303',
-    authDomain: 'face-recognition2303.firebaseapp.com',
-    databaseURL: 'https://face-recognition2303-default-rtdb.firebaseio.com',
-    storageBucket: 'face-recognition2303.appspot.com',
-    measurementId: 'G-DTM2J24LE5',
+    apiKey: 'AIzaSyA-HvwJWXmDSyortER7xW1lsK5fe32gJLM',
+    appId: '1:258259762413:web:84caec546669e5a68d60e4',
+    messagingSenderId: '258259762413',
+    projectId: 'final-year-codechamps-2',
+    authDomain: 'final-year-codechamps-2.firebaseapp.com',
+    storageBucket: 'final-year-codechamps-2.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAmSc0syjW0AeWlJtpCxrrOrVVbocSkImA',
-    appId: '1:1098873194803:android:4d75320e2a5ac847c55646',
-    messagingSenderId: '1098873194803',
-    projectId: 'face-recognition2303',
-    databaseURL: 'https://face-recognition2303-default-rtdb.firebaseio.com',
-    storageBucket: 'face-recognition2303.appspot.com',
+    apiKey: 'AIzaSyDiElENYc_YHSv6oaS9pCIHBlZr0oroC9w',
+    appId: '1:258259762413:android:f2493a769af503468d60e4',
+    messagingSenderId: '258259762413',
+    projectId: 'final-year-codechamps-2',
+    storageBucket: 'final-year-codechamps-2.firebasestorage.app',
   );
 
 }

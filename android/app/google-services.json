@@ -1,37 +1,26 @@
 {
   "project_info": {
-    "project_number": "1098873194803",
-    "firebase_url": "https://face-recognition2303-default-rtdb.firebaseio.com",
-    "project_id": "face-recognition2303",
-    "storage_bucket": "face-recognition2303.appspot.com"
+    "project_number": "258259762413",
+    "project_id": "final-year-codechamps-2",
+    "storage_bucket": "final-year-codechamps-2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1098873194803:android:4d75320e2a5ac847c55646",
+        "mobilesdk_app_id": "1:258259762413:android:f2493a769af503468d60e4",
         "android_client_info": {
           "package_name": "com.example.final_year_codechamps_2"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "1098873194803-4v0io1u5doghcmcubfhjlnnslror0og4.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAmSc0syjW0AeWlJtpCxrrOrVVbocSkImA"
+          "current_key": "AIzaSyDiElENYc_YHSv6oaS9pCIHBlZr0oroC9w"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1098873194803-4v0io1u5doghcmcubfhjlnnslror0og4.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
