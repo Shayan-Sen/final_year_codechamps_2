@@ -40,6 +40,8 @@ dependencies:
   flutter_ai_toolkit: ^0.7.1
   google_generative_ai: ^0.4.6
   provider: ^6.1.4
+  firebase_storage: ^12.4.5
+  google_mlkit_face_detection: ^0.13.1
 
 dev_dependencies:
   flutter_test:
