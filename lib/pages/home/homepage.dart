@@ -1,5 +1,5 @@
-import 'package:final_year_codechamps_2/pages/chatpage.dart';
-import 'package:final_year_codechamps_2/pages/loginpage.dart';
+import 'package:final_year_codechamps_2/pages/ai/chatpage.dart';
+import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
 import 'package:final_year_codechamps_2/widgets/jycappbar.dart';
 import 'package:flutter/material.dart';
 

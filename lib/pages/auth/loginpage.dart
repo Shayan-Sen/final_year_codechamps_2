@@ -1,15 +1,16 @@
-import 'package:final_year_codechamps_2/pages/loginpage.dart';
+import 'package:final_year_codechamps_2/pages/home/homepage.dart';
+import 'package:final_year_codechamps_2/pages/auth/signuppage.dart';
 import 'package:final_year_codechamps_2/widgets/jycloginformfield.dart';
 import 'package:flutter/material.dart';
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -33,44 +34,31 @@ class _SignupPageState extends State<SignupPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(flex:1,child: SizedBox()),
+              Expanded(flex: 1, child: SizedBox()),
               Text(
                 "Smart Tutor",
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
-              Expanded(flex: 3,child: SizedBox()),
+              Expanded(flex: 3, child: SizedBox()),
               JYCLoginFormField(
-                hintText: "Enter a valid Email or Ph.No for Username",
+                hintText: "Enter your Username",
                 labelText: "Username",
                 controller: _emailController,
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter a valid username";
+                    return "Please enter your email";
                   }
                   return null;
                 },
               ),
               JYCLoginFormField(
-                hintText: "Enter a valid Password",
+                hintText: "Enter your Password",
                 labelText: "Password",
                 obscureText: true,
                 controller: _passwordController,
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter a valid password";
-                  }
-                  return null;
-                },
-              ),
-              JYCLoginFormField(
-                hintText: "Confirm your Password",
-                labelText: "Confirm Password",
-                obscureText: true,
-                validator: (String? value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      value != _passwordController.text) {
-                    return "Your password doesn't match";
+                    return "Please enter your password";
                   }
                   return null;
                 },
@@ -80,37 +68,40 @@ class _SignupPageState extends State<SignupPage> {
                   if (_formKey.currentState!.validate()) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(builder: (context) => HomePage()),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Signup Successful")),
+                      SnackBar(
+                        content: Text(
+                          "Email: ${_emailController.text}   Password: ${_passwordController.text}",
+                        ),
+                      ),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Please fill all the fields properly")),
+                      SnackBar(content: Text("Please fill all the fields")),
                     );
                   }
                 },
-                child: Text("SignUp"),
+                child: Text("Login"),
               ),
-              Expanded(flex:3,child: SizedBox()),
+              Expanded(flex: 3, child: SizedBox()),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account?"),
+                  Text("Don't have an account?"),
                   TextButton(
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => SignupPage()),
                       );
                     },
-                    child: Text("Login"),
+                    child: Text("Sign Up"),
                   ),
-
                 ],
               ),
-              Expanded(flex:1,child: SizedBox()),
+              Expanded(flex: 1, child: SizedBox()),
             ],
           ),
         ),
