@@ -25,84 +25,86 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.blue.shade100,
-        alignment: Alignment.center,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(flex: 1, child: SizedBox()),
-              Text(
-                "Smart Tutor",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-              Expanded(flex: 3, child: SizedBox()),
-              JYCLoginFormField(
-                hintText: "Enter your Username",
-                labelText: "Username",
-                controller: _emailController,
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter your email";
-                  }
-                  return null;
-                },
-              ),
-              JYCLoginFormField(
-                hintText: "Enter your Password",
-                labelText: "Password",
-                obscureText: true,
-                controller: _passwordController,
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter your password";
-                  }
-                  return null;
-                },
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "Email: ${_emailController.text}   Password: ${_passwordController.text}",
-                        ),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Please fill all the fields")),
-                    );
-                  }
-                },
-                child: Text("Login"),
-              ),
-              Expanded(flex: 3, child: SizedBox()),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Don't have an account?"),
-                  TextButton(
-                    onPressed: () {
+      body: SafeArea(
+        child: Container(
+          color: Colors.blue.shade100,
+          alignment: Alignment.center,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(flex: 1, child: SizedBox()),
+                Text(
+                  "Smart Tutor",
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                Expanded(flex: 3, child: SizedBox()),
+                JYCLoginFormField(
+                  hintText: "Enter your Username",
+                  labelText: "Username",
+                  controller: _emailController,
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter your email";
+                    }
+                    return null;
+                  },
+                ),
+                JYCLoginFormField(
+                  hintText: "Enter your Password",
+                  labelText: "Password",
+                  obscureText: true,
+                  controller: _passwordController,
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter your password";
+                    }
+                    return null;
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => SignupPage()),
+                        MaterialPageRoute(builder: (context) => HomePage()),
                       );
-                    },
-                    child: Text("Sign Up"),
-                  ),
-                ],
-              ),
-              Expanded(flex: 1, child: SizedBox()),
-            ],
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Email: ${_emailController.text}   Password: ${_passwordController.text}",
+                          ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Please fill all the fields")),
+                      );
+                    }
+                  },
+                  child: Text("Login"),
+                ),
+                Expanded(flex: 3, child: SizedBox()),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an account?"),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignupPage()),
+                        );
+                      },
+                      child: Text("Sign Up"),
+                    ),
+                  ],
+                ),
+                Expanded(flex: 1, child: SizedBox()),
+              ],
+            ),
           ),
         ),
       ),

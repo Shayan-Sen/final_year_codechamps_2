@@ -24,94 +24,96 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.blue.shade100,
-        alignment: Alignment.center,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(flex:1,child: SizedBox()),
-              Text(
-                "Smart Tutor",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-              Expanded(flex: 3,child: SizedBox()),
-              JYCLoginFormField(
-                hintText: "Enter a valid Email or Ph.No for Username",
-                labelText: "Username",
-                controller: _emailController,
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter a valid username";
-                  }
-                  return null;
-                },
-              ),
-              JYCLoginFormField(
-                hintText: "Enter a valid Password",
-                labelText: "Password",
-                obscureText: true,
-                controller: _passwordController,
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter a valid password";
-                  }
-                  return null;
-                },
-              ),
-              JYCLoginFormField(
-                hintText: "Confirm your Password",
-                labelText: "Confirm Password",
-                obscureText: true,
-                validator: (String? value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      value != _passwordController.text) {
-                    return "Your password doesn't match";
-                  }
-                  return null;
-                },
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Signup Successful")),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Please fill all the fields properly")),
-                    );
-                  }
-                },
-                child: Text("SignUp"),
-              ),
-              Expanded(flex:3,child: SizedBox()),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Already have an account?"),
-                  TextButton(
-                    onPressed: () {
+      body: SafeArea(
+        child: Container(
+          color: Colors.blue.shade100,
+          alignment: Alignment.center,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(flex:1,child: SizedBox()),
+                Text(
+                  "Smart Tutor",
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                Expanded(flex: 3,child: SizedBox()),
+                JYCLoginFormField(
+                  hintText: "Enter a valid Email or Ph.No for Username",
+                  labelText: "Username",
+                  controller: _emailController,
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter a valid username";
+                    }
+                    return null;
+                  },
+                ),
+                JYCLoginFormField(
+                  hintText: "Enter a valid Password",
+                  labelText: "Password",
+                  obscureText: true,
+                  controller: _passwordController,
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter a valid password";
+                    }
+                    return null;
+                  },
+                ),
+                JYCLoginFormField(
+                  hintText: "Confirm your Password",
+                  labelText: "Confirm Password",
+                  obscureText: true,
+                  validator: (String? value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value != _passwordController.text) {
+                      return "Your password doesn't match";
+                    }
+                    return null;
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => LoginPage()),
                       );
-                    },
-                    child: Text("Login"),
-                  ),
-
-                ],
-              ),
-              Expanded(flex:1,child: SizedBox()),
-            ],
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Signup Successful")),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Please fill all the fields properly")),
+                      );
+                    }
+                  },
+                  child: Text("SignUp"),
+                ),
+                Expanded(flex:3,child: SizedBox()),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Already have an account?"),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: Text("Login"),
+                    ),
+        
+                  ],
+                ),
+                Expanded(flex:1,child: SizedBox()),
+              ],
+            ),
           ),
         ),
       ),
