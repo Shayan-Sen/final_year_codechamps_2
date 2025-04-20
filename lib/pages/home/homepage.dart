@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "Welcome to Home Page of final year \n codechamps \n\n Kaioken Times 20 !!!! ",
+              "Welcome to Home Page of final year \n codechamps",
               style: TextStyle(fontSize: 19),
             ),
             SizedBox(height: 20),
