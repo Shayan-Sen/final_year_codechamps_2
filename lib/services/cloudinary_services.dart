@@ -1,11 +1,29 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class CloudinaryService{
-
-  String cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME']!;
-  Future<bool> uploadToCloudinary(FilePickerResult? filePickerResult) async{
-    return false;
+class CloudinaryService {
+  Cloudinary cloudinary = Cloudinary.basic(
+    cloudName: dotenv.env['CLOUDINARY_CLOUD_NAME']!,
+  );
+  Future<bool> uploadImageToCloudinary(FilePickerResult? filePickerResult) async {
+    if (filePickerResult != null) {
+      return false;
+    }
+    File file = File(filePickerResult!.files.first.path!);
+    Uint8List fileBytes = file.readAsBytesSync();
+    cloudinary.unsignedUploadResource(
+      CloudinaryUploadResource(
+        filePath: file.path,
+        fileName: file.path.split('/').last,
+        resourceType: CloudinaryResourceType.image,
+        fileBytes: fileBytes,
+        uploadPreset: 'preset-for-file-upload',
+      ),
+    );
+    return true;
   }
-
 }
