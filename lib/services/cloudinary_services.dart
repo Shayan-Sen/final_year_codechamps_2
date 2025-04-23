@@ -15,7 +15,7 @@ class CloudinaryService {
     }
     File file = File(filePickerResult!.files.first.path!);
     Uint8List fileBytes = file.readAsBytesSync();
-    cloudinary.unsignedUploadResource(
+    CloudinaryResponse response = await cloudinary.unsignedUploadResource(
       CloudinaryUploadResource(
         filePath: file.path,
         fileName: file.path.split('/').last,
@@ -24,6 +24,8 @@ class CloudinaryService {
         uploadPreset: 'preset-for-file-upload',
       ),
     );
+
+    print(response);
     return true;
   }
 }
