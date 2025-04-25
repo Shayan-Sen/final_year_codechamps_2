@@ -95,7 +95,48 @@ class TeacherServices {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
-  Future<void> logout() async {
+
+  Future<void> deleteAccount({
+    required String username,
+    required String password,
+  }) async
+  {
+    AuthCredential credential = EmailAuthProvider.credential(
+      email: username,
+      password: password,
+    );
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) throw Exception("User not found");
+    await currentUser.reauthenticateWithCredential(credential);
+    await currentUser.delete();
+    await _auth.signOut();
+    Teacher teacher = Teacher.fromFirestore(await _firestore.collection('teachers').doc(currentUser.uid).get(), null);
+    String url = teacher.proofOfEducation['url'];
+    await _cloudinary.deleteResource(url: url);
+    if (teacher.profileImage != null) {
+      String url = teacher.profileImage!['url'];
+      await _cloudinary.deleteResource(url: url);
+    }
+    await _firestore.collection('teachers').doc(currentUser.uid).delete();
+  }
+
+  Future<void> updatePasswordFromCurrentPassword({
+    required String currentPassword,
+    required String newPassword,
+    required String email,
+  }) async
+  {
+    AuthCredential credential = EmailAuthProvider.credential(
+      email: email,
+      password: currentPassword,
+    );
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) throw Exception("User not found");
+    await currentUser.reauthenticateWithCredential(credential);
+    await currentUser.updatePassword(newPassword);
+  }
+
+Future<void> logout() async {
     await _auth.signOut();
   }
 

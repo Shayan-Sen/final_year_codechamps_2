@@ -1,8 +1,6 @@
 import 'package:final_year_codechamps_2/pages/home/homepage.dart';
 import 'package:final_year_codechamps_2/pages/auth/signuppage.dart';
-import 'package:final_year_codechamps_2/services/auth_services.dart';
 import 'package:final_year_codechamps_2/widgets/jycloginformfield.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,7 +15,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final AuthServices _authServices = AuthServices();
 
   @override
   void dispose() {
@@ -35,13 +32,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _navigationFailed(String message){
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Authentication failed: $message")),
-      );
-    }
-  }
+  // void _navigationFailed(String message){
+  //   if (mounted) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Authentication failed: $message")),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -88,19 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      try{
-                        UserCredential credential = await _authServices.signIn(
-                          email: _emailController.text.trim(),
-                          password: _passwordController.text.trim(),
-                        );
-                        if (credential.user != null) {
-                          _navigateToHomePage();
-                        }
-                      }on FirebaseAuthException catch (e){
-                        if (mounted) {
-                          _navigationFailed(e.message ?? "Unknown error");
-                        }
-                    }
+                      _navigateToHomePage();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Please fill all the fields")),
