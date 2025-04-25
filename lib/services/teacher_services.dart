@@ -24,10 +24,10 @@ class TeacherServices {
     required String password,
     required String about,
     required String educationQualification,
-    FilePickerResult? proofOfEd,
+    required FilePickerResult proofOfEd,
   }) async {
     try {
-      File file = File(proofOfEd!.files.first.path!);
+      File file = File(proofOfEd.files.first.path!);
       Uint8List fileBytes = await file.readAsBytes();
       CloudinaryResponse response = await _cloudinary.unsignedUploadResource(
         CloudinaryUploadResource(
@@ -63,7 +63,10 @@ class TeacherServices {
     }
   }
 
-  Future<String> login(String email, String password) async {
+  Future<String> login({
+    required String email,
+    required String password,
+  }) async {
     try {
       final UserCredential cred = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -89,7 +92,53 @@ class TeacherServices {
     await _auth.signOut();
   }
 
-  Future<String> uploadQuiz(Quiz quiz) async {
+  Future<void> updateTeacherDetails({
+    String? name,
+    String? about,
+    String? educationQualification,
+    FilePickerResult? proofOfEd,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("User not found");
+    final DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await _firestore.collection("teachers").doc(user.uid).get();
+    Teacher teacher1 = Teacher.fromFirestore(snapshot, null);
+    if (proofOfEd != null) {
+      File file = File(proofOfEd.files.first.path!);
+      Uint8List fileBytes = await file.readAsBytes();
+      CloudinaryResponse response = await _cloudinary.unsignedUploadResource(
+        CloudinaryUploadResource(
+          fileBytes: fileBytes,
+          fileName: file.path.split("/").last,
+          uploadPreset: "preset-for-file-upload",
+          resourceType: CloudinaryResourceType.raw,
+        ),
+      );
+      String url = teacher1.proofOfEducation['url'];
+      await _cloudinary.deleteResource(url: url);
+
+      Map<String, dynamic> proofOfEducation = {
+        'url': response.secureUrl,
+        'createdAt': response.createdAt,
+        'name': file.path.split('/').last,
+        'extension': file.path.split('.').last,
+        'publicId': response.publicId,
+      };
+      teacher1.proofOfEducation = proofOfEducation;
+    }
+    teacher1.name = (name == null) ? teacher1.name : name;
+    teacher1.about = (about == null) ? teacher1.about : about;
+    teacher1.educationQualification =
+        (educationQualification == null)
+            ? teacher1.educationQualification
+            : educationQualification;
+    await _firestore
+        .collection("teachers")
+        .doc(user.uid)
+        .update(teacher1.toFirestore());
+  }
+
+  Future<String> uploadQuiz({required Quiz quiz}) async {
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception("User not found");
@@ -100,7 +149,7 @@ class TeacherServices {
         .doc(user.uid)
         .collection('quizzes')
         .add(quiz.toFireStore());
-    await docRef.update({'id':docRef.id});
+    await docRef.update({'id': docRef.id});
 
     return "Quiz uploaded successfully";
   }
@@ -126,11 +175,15 @@ class TeacherServices {
     return quizzes;
   }
 
-  Future<String> deleteQuiz(String quizId) async {
+  Future<String> deleteQuiz({required String quizId}) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception("User not found");
-    await _firestore.collection("teachers").doc(user.uid).collection("quizzes").doc(quizId).delete();
+    await _firestore
+        .collection("teachers")
+        .doc(user.uid)
+        .collection("quizzes")
+        .doc(quizId)
+        .delete();
     return "Quiz deleted successfully";
   }
-
 }

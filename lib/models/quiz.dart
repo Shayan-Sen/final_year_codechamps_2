@@ -55,7 +55,7 @@ class Quiz{
     final data = snapshot.data();
     if (data == null) throw Exception('Data not found');
     return Quiz(
-      id: (data['id'] == "")? snapshot.id : data['id'],
+      id: (data['id'] != snapshot.id)? snapshot.id : data['id'],
       title: data['title'],
       description: data['description'],
       questions: List<Question>.from(data['questions'].map((e) => Question.fromMap(e))),

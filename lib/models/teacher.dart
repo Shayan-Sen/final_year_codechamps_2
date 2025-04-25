@@ -10,12 +10,12 @@ class Teacher {
     required this.educationQualification,
     required this.proofOfEducation});
 
-  final String name;
+  String name;
   final String email;
-  final String about;
-  final String educationQualification;
-  final Map<String, dynamic>? profileImage;
-  final Map<String, dynamic> proofOfEducation;
+  String about;
+  String educationQualification;
+  Map<String, dynamic>? profileImage;
+  Map<String, dynamic> proofOfEducation;
 
   factory Teacher.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,SnapshotOptions? options) {
