@@ -5,12 +5,14 @@ class Student {
     required this.name,
     required this.email,
     required this.about,
+    this.teachers = const [],
     this.profileImage,
   });
   final String name;
   final String email;
   final String about;
   final Map<String, dynamic>? profileImage;
+  List<String> teachers;
 
   factory Student.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,SnapshotOptions? options) {
     final data = snapshot.data();
@@ -21,6 +23,7 @@ class Student {
       email: data['email'],
       about: data['about'],
       profileImage: data['profileImage'],
+      teachers: data['teachers'],
     );
   }
 
@@ -30,6 +33,7 @@ class Student {
       'email': email,
       'about': about,
       'profileImage': profileImage,
+      'teachers': teachers,
     };
   }
 }
