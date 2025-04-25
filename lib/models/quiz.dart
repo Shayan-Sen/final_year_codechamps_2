@@ -29,11 +29,13 @@ class Question {
 
 class Quiz{
   Quiz({
+    this.id = "",
     required this.title,
     required this.description,
     required this.questions,
     this.timeLimit,
   });
+  final String id;
   final String title;
   final String description;
   final List<Question> questions;
@@ -41,6 +43,7 @@ class Quiz{
 
   Map<String,dynamic> toFireStore(){
     return {
+      'id': id,
       'title': title,
       'description': description,
       'questions': questions.map((e) => e.toMap()).toList(),
@@ -52,6 +55,7 @@ class Quiz{
     final data = snapshot.data();
     if (data == null) throw Exception('Data not found');
     return Quiz(
+      id: (data['id'] == "")? snapshot.id : data['id'],
       title: data['title'],
       description: data['description'],
       questions: List<Question>.from(data['questions'].map((e) => Question.fromMap(e))),

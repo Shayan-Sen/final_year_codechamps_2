@@ -89,17 +89,20 @@ class TeacherServices {
     await _auth.signOut();
   }
 
-  Future<void> uploadQuiz(Quiz quiz) async {
+  Future<String> uploadQuiz(Quiz quiz) async {
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception("User not found");
     }
 
-    await _firestore
+    final docRef = await _firestore
         .collection('teachers')
         .doc(user.uid)
         .collection('quizzes')
         .add(quiz.toFireStore());
+    await docRef.update({'id':docRef.id});
+
+    return "Quiz uploaded successfully";
   }
 
   Future<List<Quiz>> getQuizzes() async {
@@ -122,4 +125,12 @@ class TeacherServices {
             .toList();
     return quizzes;
   }
+
+  Future<String> deleteQuiz(String quizId) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("User not found");
+    await _firestore.collection("teachers").doc(user.uid).collection("quizzes").doc(quizId).delete();
+    return "Quiz deleted successfully";
+  }
+
 }
