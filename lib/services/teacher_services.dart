@@ -91,6 +91,10 @@ class TeacherServices {
     }
   }
 
+  Future<void> resetPassword({required String email}) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   Future<void> logout() async {
     await _auth.signOut();
   }
@@ -171,7 +175,10 @@ class TeacherServices {
       'publicId': response.publicId,
     };
     teacher1.profileImage = profileImage;
-    await _firestore.collection("teachers").doc(user.uid).update(teacher1.toFirestore());
+    await _firestore
+        .collection("teachers")
+        .doc(user.uid)
+        .update(teacher1.toFirestore());
   }
 
   Future<String> uploadQuiz({required Quiz quiz}) async {
