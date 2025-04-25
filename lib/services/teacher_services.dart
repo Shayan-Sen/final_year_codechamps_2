@@ -9,6 +9,7 @@ import 'package:final_year_codechamps_2/models/teacher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:image_picker/image_picker.dart';
 
 class TeacherServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -25,7 +26,8 @@ class TeacherServices {
     required String about,
     required String educationQualification,
     required FilePickerResult proofOfEd,
-  }) async {
+  }) async
+  {
     try {
       File file = File(proofOfEd.files.first.path!);
       Uint8List fileBytes = await file.readAsBytes();
@@ -66,7 +68,8 @@ class TeacherServices {
   Future<String> login({
     required String email,
     required String password,
-  }) async {
+  }) async
+  {
     try {
       final UserCredential cred = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -97,7 +100,8 @@ class TeacherServices {
     String? about,
     String? educationQualification,
     FilePickerResult? proofOfEd,
-  }) async {
+  }) async
+  {
     final user = _auth.currentUser;
     if (user == null) throw Exception("User not found");
     final DocumentSnapshot<Map<String, dynamic>> snapshot =
@@ -136,6 +140,38 @@ class TeacherServices {
         .collection("teachers")
         .doc(user.uid)
         .update(teacher1.toFirestore());
+  }
+
+  Future<void> updateProfilePicture({required XFile file}) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("User not found");
+    final DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await _firestore.collection("teachers").doc(user.uid).get();
+    Teacher teacher1 = Teacher.fromFirestore(snapshot, null);
+    File file1 = File(file.path);
+    Uint8List fileBytes = await file1.readAsBytes();
+    CloudinaryResponse response = await _cloudinary.unsignedUploadResource(
+      CloudinaryUploadResource(
+        fileName: file1.path.split('/').last,
+        fileBytes: fileBytes,
+        uploadPreset: 'preset-for-file-upload',
+        resourceType: CloudinaryResourceType.image,
+      ),
+    );
+    if (teacher1.profileImage != null) {
+      String url = teacher1.profileImage!['url'];
+      await _cloudinary.deleteResource(url: url);
+    }
+
+    Map<String, dynamic> profileImage = {
+      'url': response.secureUrl,
+      'createdAt': response.createdAt,
+      'name': file.path.split('/').last,
+      'extension': file.path.split('.').last,
+      'publicId': response.publicId,
+    };
+    teacher1.profileImage = profileImage;
+    await _firestore.collection("teachers").doc(user.uid).update(teacher1.toFirestore());
   }
 
   Future<String> uploadQuiz({required Quiz quiz}) async {
