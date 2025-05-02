@@ -7,7 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:final_year_codechamps_2/models/quiz.dart';
 import 'package:final_year_codechamps_2/models/teacher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+//import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -19,7 +19,7 @@ class TeacherServices {
   );
 
   Future<String> signUp({
-    required BuildContext context,
+    // required BuildContext context,
     required String name,
     required String email,
     required String password,
