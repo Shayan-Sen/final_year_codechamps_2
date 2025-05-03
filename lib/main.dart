@@ -2,6 +2,8 @@ import 'package:final_year_codechamps_2/firebase_options.dart';
 import 'package:final_year_codechamps_2/pages/home/homepage.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
 import 'package:final_year_codechamps_2/providers/user_provider.dart';
+import 'package:final_year_codechamps_2/services/student_services.dart';
+import 'package:final_year_codechamps_2/services/teacher_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,21 +22,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-      title: "Smart Tutor",
-    );
-  }
-}
-
-class MyAppWithProvider extends StatelessWidget {
-  const MyAppWithProvider({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => StudentProvider(studentServices: StudentServices())..refreshUser()),
+        ChangeNotifierProvider(create: (context) => TeacherProvider(teacherServices: TeacherServices())..refreshUser())
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: DefaultPage(),
@@ -68,5 +60,3 @@ class DefaultPage extends StatelessWidget {
     );
   }
 }
-
-// https://youtu.be/LFlE8yV7lJY

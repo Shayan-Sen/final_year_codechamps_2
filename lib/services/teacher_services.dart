@@ -18,6 +18,14 @@ class TeacherServices {
     cloudName: dotenv.env['CLOUDINARY_CLOUD_NAME']!,
   );
 
+  Future<Teacher> getTeacher() async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("User not found");
+    final DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await _firestore.collection("teachers").doc(user.uid).get();
+    return Teacher.fromFirestore(snapshot, null);
+  }
+
   Future<String> signUp({
     // required BuildContext context,
     required String name,

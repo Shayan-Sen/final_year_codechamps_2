@@ -8,10 +8,10 @@ class Student {
     this.teachers = const [],
     this.profileImage,
   });
-  final String name;
+  String name;
   final String email;
-  final String about;
-  final Map<String, dynamic>? profileImage;
+  String about;
+  Map<String, dynamic>? profileImage;
   List<String> teachers;
 
   factory Student.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,SnapshotOptions? options) {
