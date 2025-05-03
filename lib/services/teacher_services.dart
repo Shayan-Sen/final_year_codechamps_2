@@ -39,6 +39,7 @@ class TeacherServices {
   }) async
   {
     try {
+      print(_cloudinary.cloudName);
       File file = File(proofOfEd.files.first.path!);
       Uint8List fileBytes = await file.readAsBytes();
       CloudinaryResponse response = await _cloudinary.unsignedUploadResource(
@@ -51,7 +52,7 @@ class TeacherServices {
       );
       Map<String, dynamic> proofOfEducation = {
         'url': response.secureUrl,
-        'createdAt': response.createdAt,
+        'createdAt': response.createdAt.toString(),
         'name': file.path.split('/').last,
         'extension': file.path.split('.').last,
         'publicId': response.publicId,
@@ -173,7 +174,7 @@ class TeacherServices {
 
       Map<String, dynamic> proofOfEducation = {
         'url': response.secureUrl,
-        'createdAt': response.createdAt,
+        'createdAt': response.createdAt.toString(),
         'name': file.path.split('/').last,
         'extension': file.path.split('.').last,
         'publicId': response.publicId,
