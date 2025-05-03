@@ -1,6 +1,7 @@
 import 'package:final_year_codechamps_2/pages/ai/chatpage.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
 import 'package:final_year_codechamps_2/widgets/jycappbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -26,6 +27,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => LoginPage()),

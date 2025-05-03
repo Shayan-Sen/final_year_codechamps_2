@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
+import 'package:final_year_codechamps_2/services/student_services.dart';
 import 'package:final_year_codechamps_2/services/teacher_services.dart';
 import 'package:final_year_codechamps_2/widgets/jycloginformfield.dart';
 import 'package:flutter/material.dart';
@@ -39,12 +40,12 @@ class SignupPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigator.pushReplacement(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => StudentPageView(),
-                    //   ),
-                    // );
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StudentPageView(),
+                      ),
+                    );
                   },
                   style: _buttonStyle,
                   child: Text("Student"),
@@ -126,6 +127,7 @@ class _TeacherPageViewState extends State<TeacherPageView> {
                 final result = await FilePicker.platform.pickFiles(
                   type: FileType.any,
                   allowMultiple: false,
+                  withData: true,
                 );
                 setState(() {
                   filePickerResult = result;
@@ -197,7 +199,6 @@ class _TeacherPageViewState extends State<TeacherPageView> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(message)));
-      print(message);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),
@@ -378,3 +379,205 @@ class _TeacherPageViewState extends State<TeacherPageView> {
     );
   }
 }
+
+class StudentPageView extends StatefulWidget {
+  const StudentPageView({super.key});
+
+  @override
+  State<StudentPageView> createState() => _StudentPageViewState();
+}
+
+class _StudentPageViewState extends State<StudentPageView> {
+  final StudentServices services = StudentServices();
+  final TextEditingController _nameController = TextEditingController();
+  final GlobalKey<FormState> _nameKey = GlobalKey<FormState>();
+
+  final TextEditingController _emailController = TextEditingController();
+  final GlobalKey<FormState> _emailKey = GlobalKey<FormState>();
+  final TextEditingController _aboutController = TextEditingController();
+  final GlobalKey<FormState> _aboutKey = GlobalKey<FormState>();
+  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _passwordKey = GlobalKey<FormState>();
+  final PageController _pageController = PageController();
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _aboutController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _submit() async{
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final about = _aboutController.text.trim();
+    final password = _passwordController.text.trim();
+    if (name.isEmpty || email.isEmpty || about.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill all the fields")),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SignupPage()),
+      );
+    } else {
+      String message = await services.signup(name: name, email: email, password: password, about: about);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+
+    }
+  }
+
+  int _currentPage = 0;
+  void _nextPage() {
+    if (_currentPage < 3) {
+      _pageController.nextPage(
+        duration: Duration(milliseconds: 400),
+        curve: Curves.ease,
+      );
+      } else {
+      _submit();
+    }
+  }
+
+  Widget _buildPage({
+    required String label,
+    required GlobalKey<FormState> formKey,
+    required String description,
+    required String buttonText,
+    required Widget fieldWidget,
+  }) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(label, style: const TextStyle(fontSize: 24)),
+              const SizedBox(height: 24),
+              Text(description),
+              const SizedBox(height: 50),
+              fieldWidget,
+              SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    _nextPage();
+                  }
+                },
+                child: Text(buttonText),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(centerTitle: true, title: Text("SmartTutor")),
+      body: PageView(
+        controller: _pageController,
+        physics: NeverScrollableScrollPhysics(),
+        onPageChanged: (index) => setState(() => _currentPage = index),
+        children: [
+          //Name
+          _buildPage(
+            formKey: _nameKey,
+            label: "Name",
+            description:
+            "Enter your name here.This will appear in your profile as your registered student name",
+            buttonText: "Next",
+            fieldWidget: JYCLoginFormField(
+              labelText: "Student name",
+              controller: _nameController,
+              hintText: "Enter your name",
+              validator: (p0) {
+                if (p0 == null || p0.isEmpty) {
+                  return "Please enter your name";
+                }
+                return null;
+              },
+            ),
+          ),
+
+          // about
+          _buildPage(
+            formKey: _aboutKey,
+            label: "About",
+            description: "Write something about yourself",
+            buttonText: "Next",
+            fieldWidget: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: _aboutController,
+                decoration: InputDecoration(
+                  labelText: "About",
+                  hintText: "Write something about yourself",
+                ),
+                validator: (p0) {
+                  if (p0 == null || p0.isEmpty) {
+                    return "Please enter something about yourself";
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ),
+
+
+          //Email
+          _buildPage(
+            formKey: _emailKey,
+            label: "Email",
+            description: "Enter your email id",
+            buttonText: "Next",
+            fieldWidget: JYCLoginFormField(
+              labelText: "Email",
+              controller: _emailController,
+              hintText: "Enter your email id",
+              validator: (p0) {
+                if (p0 == null || p0.isEmpty) {
+                  return "Please enter your email id";
+                }
+                return null;
+              },
+            ),
+          ),
+
+          //Password
+          _buildPage(
+            formKey: _passwordKey,
+            label: "Password",
+            description: "Enter your password here",
+            buttonText: "Submit",
+            fieldWidget: JYCLoginFormField(
+              labelText: "Password",
+              controller: _passwordController,
+              hintText: "Enter your password",
+              obscureText: true,
+              validator: (p0) {
+                if (p0 == null || p0.isEmpty) {
+                  return "Please enter your password";
+                }
+                return null;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
