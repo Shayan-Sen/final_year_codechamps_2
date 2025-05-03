@@ -20,14 +20,14 @@ class Question {
 
   factory Question.fromMap(Map<String, dynamic> map) {
     return Question(
-      question: map['question'],
-      options: List<String>.from(map['options']),
-      correctOption: map['correctOption'],
+      question: map['question'] as String,
+      options: List<String>.from(map['options'] as List<dynamic>),
+      correctOption: map['correctOption'] as int,
     );
   }
 }
 
-class Quiz{
+class Quiz {
   Quiz({
     this.id = "",
     required this.title,
@@ -41,25 +41,47 @@ class Quiz{
   final List<Question> questions;
   final int? timeLimit;
 
-  Map<String,dynamic> toFireStore(){
-    return {
-      'id': id,
-      'title': title,
-      'description': description,
-      'questions': questions.map((e) => e.toMap()).toList(),
-      'timeLimit': timeLimit
-    };
+  Quiz copyWith({
+    String? title,
+    String? description,
+    List<Question>? questions,
+    int? timeLimit,
+  }) {
+    return Quiz(
+      id: id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      questions: questions ?? this.questions,
+      timeLimit: timeLimit ?? this.timeLimit,
+    );
   }
 
-  factory Quiz.fromFireStore(DocumentSnapshot<Map<String, dynamic>> snapshot,SnapshotOptions? options){
+  Map<String, dynamic> toFirestore() {
+    // ensure map accepts dynamic values
+    final Map<String, dynamic> map = {
+      'title': title,
+      'description': description,
+      'questions': questions.map((q) => q.toMap()).toList(),
+    };
+    if (timeLimit != null) {
+      map['timeLimit'] = timeLimit;
+    }
+    return map;
+  }
+
+  factory Quiz.fromFireStore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data();
     if (data == null) throw Exception('Data not found');
     return Quiz(
-      id: (data['id'] != snapshot.id)? snapshot.id : data['id'],
-      title: data['title'],
-      description: data['description'],
-      questions: List<Question>.from(data['questions'].map((e) => Question.fromMap(e))),
-      timeLimit: data['timeLimit']
+      id: snapshot.id,
+      title: data['title'] as String,
+      description: data['description'] as String,
+      questions: List<Question>.from(
+        (data['questions'] as List<dynamic>).map(
+          (e) => Question.fromMap(e as Map<String, dynamic>),
+        ),
+      ),
+      timeLimit: data['timeLimit'] as int?,
     );
   }
 }

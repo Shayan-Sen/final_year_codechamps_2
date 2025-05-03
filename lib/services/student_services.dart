@@ -10,17 +10,20 @@ import 'package:image_picker/image_picker.dart';
 
 class StudentServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Cloudinary _cloudinary = Cloudinary.basic(
     cloudName: dotenv.env['CLOUDINARY_CLOUD_NAME']!,
+  );
+
+  final _studentCol = FirebaseFirestore.instance.collection('students').withConverter<Student>(
+    fromFirestore: (snapshot, _) => Student.fromFirestore(snapshot),
+    toFirestore: (student, _) => student.toFirestore(),
   );
 
   Future<Student> getStudent()async{
     final user = _auth.currentUser;
     if (user == null) throw Exception("User not found");
-    final DocumentSnapshot<Map<String, dynamic>> snapshot =
-    await _firestore.collection("students").doc(user.uid).get();
-    return Student.fromFirestore(snapshot, null);
+    final student = (await _studentCol.doc(user.uid).get()).data()!;
+    return student;
   }
 
   Future<String> signup({
@@ -34,10 +37,7 @@ class StudentServices {
       Student student = Student(name: name, email: email, about: about);
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
-      await _firestore
-          .collection('students')
-          .doc(userCredential.user!.uid)
-          .set(student.toFirestore());
+      await _studentCol.doc(userCredential.user!.uid).set(student);
       return "Signed up successfully";
     } catch (e) {
       return "Unable to sign up: $e";
@@ -58,8 +58,8 @@ class StudentServices {
         await _auth.signOut();
         return "User not found";
       }
-      DocumentSnapshot snapshot =
-          await _firestore.collection('students').doc(cred.user!.uid).get();
+      final DocumentSnapshot snapshot =
+          await _studentCol.doc(cred.user!.uid).get();
       if (!snapshot.exists) {
         await _auth.signOut();
         return "User not found";
@@ -80,18 +80,18 @@ class StudentServices {
     required String password,
   }) async
   {
-    AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
+    final AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
     final currentUser = _auth.currentUser;
     if (currentUser == null) throw Exception("User not found");
     await currentUser.reauthenticateWithCredential(credential);
     await currentUser.delete();
     await _auth.signOut();
-    Student student = Student.fromFirestore(await _firestore.collection('students').doc(currentUser.uid).get(), null);
+    Student student = (await _studentCol.doc(currentUser.uid).get()).data()!;
     if (student.profileImage != null) {
       String url = student.profileImage!['url'];
       await _cloudinary.deleteResource(url: url);
     }
-    await _firestore.collection('students').doc(currentUser.uid).delete();
+    await _studentCol.doc(currentUser.uid).delete();
   }
 
   Future<void> updatePasswordFromCurrentPassword({
@@ -121,24 +121,17 @@ class StudentServices {
 {
   final user = _auth.currentUser;
   if (user == null) throw Exception("User not found");
-  final DocumentSnapshot<Map<String, dynamic>> snapshot =
-  await _firestore.collection("students").doc(user.uid).get();
-  Student student1 = Student.fromFirestore(snapshot, null);
-  student1.name = (name == null) ? student1.name : name;
-  student1.about = (about == null) ? student1.about : about;
-  await _firestore
-      .collection("students")
-      .doc(user.uid)
-      .update(student1.toFirestore());
+  Student student1 = (await _studentCol.doc(user.uid).get()).data()!;
+  student1.copyWith(name: (name == null) ? student1.name : name);
+  student1.copyWith(about: (about == null) ? student1.about : about);
+  await _studentCol.doc(user.uid).set(student1);
 
 }
 
   Future<void> updateProfilePicture({required XFile file}) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception("User not found");
-    final DocumentSnapshot<Map<String, dynamic>> snapshot =
-        await _firestore.collection("students").doc(user.uid).get();
-    Student student1 = Student.fromFirestore(snapshot, null);
+    final Student student1 = (await _studentCol.doc(user.uid).get()).data()!;
     File file1 = File(file.path);
     Uint8List fileBytes = await file1.readAsBytes();
     CloudinaryResponse response = await _cloudinary.unsignedUploadResource(
@@ -160,9 +153,8 @@ class StudentServices {
       'extension': file.path.split('.').last,
       'publicId': response.publicId,
       };
-    student1.profileImage = profileImage;
-    await _firestore
-        .collection("students")
+    student1.copyWith(profileImage: profileImage);
+    await _studentCol
         .doc(user.uid)
         .update(student1.toFirestore());
   }

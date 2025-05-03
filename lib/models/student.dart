@@ -8,26 +8,39 @@ class Student {
     this.teachers = const [],
     this.profileImage,
   });
-  String name;
+  final String name;
   final String email;
-  String about;
-  Map<String, dynamic>? profileImage;
-  List<String> teachers;
+  final String about;
+  final Map<String, dynamic>? profileImage;
+  final List<String> teachers;
 
-  factory Student.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,SnapshotOptions? options) {
-    final data = snapshot.data();
-    if (data == null) throw Exception("Data not found");
-
+  Student copyWith({
+    String? name,
+    String? about,
+    Map<String, dynamic>? profileImage,
+    List<String>? teachers,
+  }) {
     return Student(
-      name: data['name'],
-      email: data['email'],
-      about: data['about'],
-      profileImage: data['profileImage'],
-      teachers: data['teachers'],
+      name: name ?? this.name,
+      email: email,
+      about: about ?? this.about,
+      profileImage: profileImage ?? this.profileImage,
+      teachers: teachers ?? this.teachers,
     );
   }
 
-  Map<String,dynamic> toFirestore() {
+  factory Student.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data()!;
+    return Student(
+      name: data['name'] as String,
+      email: data['email'] as String,
+      about: data['about'] as String,
+      profileImage: data['profileImage'] as Map<String, dynamic>?,
+      teachers: List<String>.from(data['teachers'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
     return {
       'name': name,
       'email': email,
