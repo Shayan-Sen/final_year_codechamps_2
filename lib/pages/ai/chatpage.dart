@@ -1,11 +1,13 @@
 import 'package:final_year_codechamps_2/widgets/jycappbar.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ai_toolkit/flutter_ai_toolkit.dart';
 
 
 class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
+  ChatPage({super.key});
+  final String apiKey = dotenv.env['GEMINI_API_KEY']!;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -28,7 +30,7 @@ class ChatPage extends StatelessWidget {
         provider: GeminiProvider(
           model: GenerativeModel(
             model: 'gemini-2.0-flash',
-            apiKey: 'AIzaSyBfpGQmKYu7eD89E22QWEARNy67HCRCkb0',
+            apiKey: apiKey,
           ),
         ),
       ),
