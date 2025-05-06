@@ -1,6 +1,8 @@
+
 import 'package:final_year_codechamps_2/firebase_options.dart';
-import 'package:final_year_codechamps_2/pages/home/homepage.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
+import 'package:final_year_codechamps_2/pages/home/teacher_home.dart';
+import 'package:final_year_codechamps_2/pages/home/student_home.dart';
 import 'package:final_year_codechamps_2/providers/user_provider.dart';
 import 'package:final_year_codechamps_2/services/student_services.dart';
 import 'package:final_year_codechamps_2/services/teacher_services.dart';
@@ -14,7 +16,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: 'assets/.env');
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -24,39 +26,76 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => StudentProvider(studentServices: StudentServices())..refreshUser()),
-        ChangeNotifierProvider(create: (context) => TeacherProvider(teacherServices: TeacherServices())..refreshUser())
+        ChangeNotifierProvider(create: (_) => StudentProvider(studentServices: StudentServices())),
+        ChangeNotifierProvider(create: (_) => TeacherProvider(teacherServices: TeacherServices())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: DefaultPage(),
-        title: "Smart Tutor",
+        title: 'Smart Tutor',
+        home: const DefaultPage(),
       ),
     );
   }
 }
 
-class DefaultPage extends StatelessWidget {
+class DefaultPage extends StatefulWidget {
   const DefaultPage({super.key});
+  @override
+  State<DefaultPage> createState() => _DefaultPageState();
+}
+
+class _DefaultPageState extends State<DefaultPage> {
+  bool _didFetch = false;
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.connectionState == ConnectionState.active) {
-          if (snapshot.hasData) {
-            return HomePage();
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Something went wrong: ${snapshot.error}'),
-            );
+    final user = FirebaseAuth.instance.currentUser;
+    final studentProv = context.watch<StudentProvider>();
+    final teacherProv = context.watch<TeacherProvider>();
+
+    // 1) Not signed in → go to login
+    if (user == null) {
+      return const LoginPage();
+    }
+
+    // 2) Kick off profile fetch exactly once
+    if (!_didFetch) {
+      _didFetch = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        studentProv.refreshUser().then((_) {
+          if (!studentProv.hasProfile) {
+            teacherProv.refreshUser();
           }
-        }
-        return LoginPage();
-      },
+        });
+      });
+    }
+
+    // 3) Show loading while fetching
+    if (studentProv.status == Status.loading ||
+        teacherProv.status == Status.loading ||
+        (studentProv.status == Status.idle && teacherProv.status == Status.idle)) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // 4) Route once we have a profile
+    if (studentProv.hasProfile) {
+      return const StudentHome();
+    }
+    if (teacherProv.hasProfile) {
+      return const TeacherHome();
+    }
+
+    // 5) Both failed → show error
+    return Scaffold(
+      body: Center(
+        child: Text(
+          'No profile found for ${user.email}.\n'
+              'Please log in with the correct role.',
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }

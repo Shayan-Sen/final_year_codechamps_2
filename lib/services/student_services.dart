@@ -63,8 +63,8 @@ class StudentServices {
       if (!snapshot.exists) {
         await _auth.signOut();
         return "User not found";
-        }
-      return "Logged in successfully";
+        }else{
+      return "Student Logged in successfully";}
     }
     catch (e) {
       return "Unable to login: $e";

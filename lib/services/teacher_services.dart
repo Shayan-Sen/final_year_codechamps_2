@@ -92,8 +92,8 @@ class TeacherServices {
       if (!snapshot.exists) {
         await _auth.signOut();
         return "User not found";
-      }
-      return "Logged in successfully";
+      }else{
+      return "Teacher Logged in successfully";}
     } catch (e) {
       return "Unable to login: $e";
     }

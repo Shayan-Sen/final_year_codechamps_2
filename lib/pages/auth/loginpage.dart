@@ -1,5 +1,6 @@
-import 'package:final_year_codechamps_2/pages/home/homepage.dart';
+import 'package:final_year_codechamps_2/pages/home/teacher_home.dart';
 import 'package:final_year_codechamps_2/pages/auth/signuppage.dart';
+import 'package:final_year_codechamps_2/pages/home/student_home.dart';
 import 'package:final_year_codechamps_2/services/student_services.dart';
 import 'package:final_year_codechamps_2/services/teacher_services.dart';
 import 'package:final_year_codechamps_2/widgets/jycloginformfield.dart';
@@ -33,7 +34,16 @@ class _LoginPageState extends State<LoginPage> {
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => TeacherHome()),
+      );
+    }
+  }
+
+  void _navigateToStudentHomePage() {
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => StudentHome()),
       );
     }
   }
@@ -57,41 +67,48 @@ class _LoginPageState extends State<LoginPage> {
   void _submit() async {
     if (_selectedRole == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select a role")),
+        const SnackBar(content: Text("Please select a role")),
       );
       return;
     }
 
-    final email = _emailController.text.trim();
+    // 1) Show loading
+    if (!mounted) return;
+    setState(() => _isLoading = true);
+
+    final email    = _emailController.text.trim();
     final password = _passwordController.text.trim();
+
     String message;
     bool loginSuccess = false;
 
+    // 2) Call login
     if (_selectedRole == 'Teacher') {
-      message = await teacherServices.login(
-          email: email, password: password);
-      // Check if login was successful
-      loginSuccess = message.contains("successfully");
-    }
-    else if (_selectedRole == 'Student') {
-      message = await studentServices.login(
-          email: email, password: password);
-      // Check if login was successful
-      loginSuccess = message.contains("successfully");
-    }
-    else {
-      message = 'Invalid role selected';
+      message = await teacherServices.login(email: email, password: password);
+      loginSuccess = (message == "Teacher Logged in successfully");
+    } else {
+      message = await studentServices.login(email: email, password: password);
+      loginSuccess = (message == "Student Logged in successfully");
     }
 
-    // Show appropriate message and navigate only if login was successful
+    // 3) Before touching setState or context again, bail if unmounted
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    // 4) Navigate or show SnackBar
     if (loginSuccess) {
       _navigationSuccessful(message);
-      _navigateToHomePage();
+      if (_selectedRole == 'Teacher') {
+        _navigateToHomePage();
+      } else {
+        _navigateToStudentHomePage();
+      }
     } else {
       _navigationFailed(message);
     }
   }
 
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,17 +176,26 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _submit();
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Please fill all the fields")),
-                    );
-                  }
-                },
-                child: Text("Login"),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      _submit();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Please fill all the fields")),
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    minimumSize: WidgetStatePropertyAll(Size(double.infinity, 50)),
+                    backgroundColor: WidgetStatePropertyAll(Color(0xFF001B4D)),
+                    foregroundColor: WidgetStatePropertyAll(Colors.white),
+                    textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 20)),
+                  ),
+                  child: _isLoading? CircularProgressIndicator(color: Colors.white):Text("Login"),
+                ),
               ),
               Expanded(flex: 3, child: SizedBox()),
               Row(

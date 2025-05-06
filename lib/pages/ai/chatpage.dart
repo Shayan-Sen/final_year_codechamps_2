@@ -7,12 +7,22 @@ import 'package:flutter_ai_toolkit/flutter_ai_toolkit.dart';
 
 class ChatPage extends StatelessWidget {
   ChatPage({super.key});
-  final String apiKey = dotenv.env['GEMINI_API_KEY']!;
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: JycAppbar(data: "Chat Page"),
-    body: Container(
+    body: ChatBot(),
+  );
+}
+
+class ChatBot extends StatelessWidget {
+  ChatBot({super.key});
+
+  final String apiKey = dotenv.env['GEMINI_API_KEY']!;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -25,7 +35,7 @@ class ChatPage extends StatelessWidget {
       ),
       child: LlmChatView(
         style: LlmChatViewStyle(
-          backgroundColor: Colors.black38
+            backgroundColor: Colors.black38
         ),
         provider: GeminiProvider(
           model: GenerativeModel(
@@ -34,6 +44,6 @@ class ChatPage extends StatelessWidget {
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

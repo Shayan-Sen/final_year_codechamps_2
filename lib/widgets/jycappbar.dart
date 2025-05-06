@@ -8,6 +8,12 @@ class JycAppbar extends StatelessWidget implements PreferredSizeWidget{
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leadingWidth: 90,
+      leading: Builder(
+        builder: (context) {
+      return Center(child: Text("SmartTutor",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold),));
+    }
+    ),
       centerTitle: true,
       foregroundColor: Colors.white,
       backgroundColor: Color(0xFF001B4D),
