@@ -1,10 +1,13 @@
+import 'package:final_year_codechamps_2/models/teacher.dart';
 import 'package:final_year_codechamps_2/pages/ai/chatpage.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
+import 'package:final_year_codechamps_2/providers/user_provider.dart';
 import 'package:final_year_codechamps_2/services/teacher_services.dart';
 import 'package:final_year_codechamps_2/widgets/jycappbar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class TeacherHome extends StatefulWidget {
   const TeacherHome({super.key});
@@ -181,9 +184,77 @@ class _TeacherHomeState extends State<TeacherHome> {
     );
   }
 
+  Widget _card({required String title,required String description}){
+    return Card(
+      elevation: 4, // Shadow depth
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
 
-  Widget _profileSection(){
-    return Center(child: Text("Profile Page"));
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        width: double.infinity,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              description,
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+    );
+
+  }
+
+  Widget _profileSection() {
+
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        final Teacher? student = context.watch<TeacherProvider>().teacher;
+        if (student == null) {
+          return const Center(child: Text('data not found'));
+        }
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: (){},
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.blue,
+
+                    child: (student.profileImage == null )
+                        ? Text('${student.name.split(' ').first[0].toUpperCase()}${student.name.split(' ').last[0].toUpperCase()}',style: TextStyle(fontSize: 44,color: Colors.white),)
+                        : null,
+                  ),
+                ),
+                const SizedBox(height: 70),
+                _card(title: 'Name', description: student.name),
+                const SizedBox(height: 10),
+                _card(title: 'Email', description: student.email),
+                const SizedBox(height: 10),
+                _card(title: 'Email', description: student.about),
+                const SizedBox(height: 10),
+                _card(title: 'About', description: student.educationQualification),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
 

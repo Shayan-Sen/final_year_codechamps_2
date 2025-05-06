@@ -1,10 +1,16 @@
+// import 'dart:io';
+
+import 'package:final_year_codechamps_2/models/student.dart';
 import 'package:final_year_codechamps_2/pages/ai/chatpage.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
+import 'package:final_year_codechamps_2/providers/user_provider.dart';
 import 'package:final_year_codechamps_2/services/student_services.dart';
 import 'package:final_year_codechamps_2/widgets/jycappbar.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class StudentHome extends StatefulWidget {
   const StudentHome({super.key});
@@ -83,7 +89,6 @@ class _StudentHomeState extends State<StudentHome> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Initialize components that need context/theme here
     _tabs[1] = _buildDashboard();
     _tabs[2] = _buildAnalytics();
   }
@@ -104,9 +109,9 @@ class _StudentHomeState extends State<StudentHome> {
           currentIndex: _currentIndex,
           items: const[
             BottomNavigationBarItem(icon: Icon(Icons.person),label: 'Profile',backgroundColor: Color(0xFF001B4D)),
-            BottomNavigationBarItem(icon: Icon(Icons.dashboard),label: 'Dashboard'),
-            BottomNavigationBarItem(icon: Icon(Icons.analytics),label: 'Analytics'),
-            BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.bots),label: 'AI')
+            BottomNavigationBarItem(icon: Icon(Icons.dashboard),label: 'Dashboard',backgroundColor: Color(0xFF001B4D)),
+            BottomNavigationBarItem(icon: Icon(Icons.analytics),label: 'Analytics',backgroundColor: Color(0xFF001B4D)),
+            BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.bots),label: 'AI',backgroundColor: Color(0xFF001B4D))
           ],
         onTap: (index) {
             setState(() {
@@ -117,9 +122,82 @@ class _StudentHomeState extends State<StudentHome> {
     );
   }
 
-  Widget _profileSection(){
-    return Center(child: Text("Profile Page"));
+  // ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _snack(String message){
+  //   return ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)),
+  //   );
+  // }
+
+  Widget _card({required String title,required String description}){
+    return Card(
+      elevation: 4, // Shadow depth
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        width: double.infinity,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              description,
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+    );
+
   }
+
+  Widget _profileSection() {
+
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        final Student? student = context.watch<StudentProvider>().student;
+        if (student == null) {
+          return const Center(child: Text('data not found'));
+        }
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: (){},
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.blue,
+
+                    child: (student.profileImage == null )
+                        ? Text('${student.name.split(' ').first[0].toUpperCase()}${student.name.split(' ').last[0].toUpperCase()}',style: TextStyle(fontSize: 44,color: Colors.white),)
+                        : null,
+                  ),
+                ),
+                const SizedBox(height: 70),
+                _card(title: 'Name', description: student.name),
+                const SizedBox(height: 10),
+                _card(title: 'Email', description: student.email),
+                const SizedBox(height: 10),
+                _card(title: 'About', description: student.about),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
 
   Widget _buildDashboard() {
