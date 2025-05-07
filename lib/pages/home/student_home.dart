@@ -1,6 +1,4 @@
-// import 'dart:io';
 
-import 'package:final_year_codechamps_2/models/student.dart';
 import 'package:final_year_codechamps_2/pages/ai/chatpage.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
 import 'package:final_year_codechamps_2/providers/user_provider.dart';
@@ -9,7 +7,6 @@ import 'package:final_year_codechamps_2/widgets/jycappbar.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class StudentHome extends StatefulWidget {
@@ -79,7 +76,7 @@ class _StudentHomeState extends State<StudentHome> {
     super.initState();
     // Don't call methods that use Theme.of(context) here
     _tabs = [
-      _profileSection(),
+      Container(),
       Container(), // Placeholder until build time
       Container(), // Placeholder until build time
       ChatBot(),
@@ -89,6 +86,7 @@ class _StudentHomeState extends State<StudentHome> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _tabs[0] = _profileSection();
     _tabs[1] = _buildDashboard();
     _tabs[2] = _buildAnalytics();
   }
@@ -98,7 +96,7 @@ class _StudentHomeState extends State<StudentHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: JycAppbar(data: _tabTitles[_currentIndex],actions: [IconButton(onPressed: () async{
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
         await services.logout();
       }, icon: Icon(Icons.logout))],
       ),
@@ -158,16 +156,32 @@ class _StudentHomeState extends State<StudentHome> {
   }
 
   Widget _profileSection() {
+    final provider = context.watch<StudentProvider>();
+
+    // Show loading indicator if explicitly loading
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final student = provider.student;
+    if (student == null) {
+      // Handle no student case - maybe trigger a load or show error
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("No student data available"),
+            ElevatedButton(
+              onPressed: () => provider.loadStudent(),
+              child: Text("Reload Data"),
+            )
+          ],
+        ),
+      );
+    }
 
 
-    return StatefulBuilder(
-      builder: (context, setState) {
-        final Student? student = context.watch<StudentProvider>().student;
-        if (student == null) {
-          return const Center(child: Text('data not found'));
-        }
-
-        return SingleChildScrollView(
+    return SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Center(
             child: Column(
@@ -194,8 +208,6 @@ class _StudentHomeState extends State<StudentHome> {
             ),
           ),
         );
-      },
-    );
   }
 
 

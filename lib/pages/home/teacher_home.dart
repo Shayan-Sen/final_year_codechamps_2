@@ -1,6 +1,6 @@
-import 'package:final_year_codechamps_2/models/teacher.dart';
 import 'package:final_year_codechamps_2/pages/ai/chatpage.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
+import 'package:final_year_codechamps_2/pages/home/education_card.dart';
 import 'package:final_year_codechamps_2/providers/user_provider.dart';
 import 'package:final_year_codechamps_2/services/teacher_services.dart';
 import 'package:final_year_codechamps_2/widgets/jycappbar.dart';
@@ -141,7 +141,7 @@ class _TeacherHomeState extends State<TeacherHome> {
     super.initState();
     // Don't call methods that use Theme.of(context) here
     _tabs = [
-      _profileSection(),
+      Container(),
       Container(), // Placeholder until build time
       Container(), // Placeholder until build time
       ChatBot(),
@@ -152,6 +152,7 @@ class _TeacherHomeState extends State<TeacherHome> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Initialize components that need context/theme here
+    _tabs[0] = _profileSection();
     _tabs[1] = _buildDashboard();
     _tabs[2] = _buildStudentsTab();
   }
@@ -160,7 +161,7 @@ class _TeacherHomeState extends State<TeacherHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: JycAppbar(data: _tabTitles[_currentIndex],actions: [IconButton(onPressed: () async{
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
         await services.logout();
       }, icon: Icon(Icons.logout))],
       ),
@@ -215,14 +216,29 @@ class _TeacherHomeState extends State<TeacherHome> {
   }
 
   Widget _profileSection() {
+    final provider = context.watch<TeacherProvider>();
 
+    // Show loading indicator if explicitly loading
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-    return StatefulBuilder(
-      builder: (context, setState) {
-        final Teacher? student = context.watch<TeacherProvider>().teacher;
-        if (student == null) {
-          return const Center(child: Text('data not found'));
-        }
+    final student = provider.teacher;
+    if (student == null) {
+      // Handle no student case - maybe trigger a load or show error
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("No student data available"),
+            ElevatedButton(
+              onPressed: () => provider.loadTeacher(),
+              child: Text("Reload Data"),
+            )
+          ],
+        ),
+      );
+    }
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -249,12 +265,12 @@ class _TeacherHomeState extends State<TeacherHome> {
                 _card(title: 'Email', description: student.about),
                 const SizedBox(height: 10),
                 _card(title: 'About', description: student.educationQualification),
+                EducationCard(proofOfEducation: student.proofOfEducation),
+                const SizedBox(height: 10)
               ],
             ),
           ),
         );
-      },
-    );
   }
 
 

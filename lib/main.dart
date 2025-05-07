@@ -1,11 +1,8 @@
-
 import 'package:final_year_codechamps_2/firebase_options.dart';
 import 'package:final_year_codechamps_2/pages/auth/loginpage.dart';
 import 'package:final_year_codechamps_2/pages/home/teacher_home.dart';
 import 'package:final_year_codechamps_2/pages/home/student_home.dart';
 import 'package:final_year_codechamps_2/providers/user_provider.dart';
-import 'package:final_year_codechamps_2/services/student_services.dart';
-import 'package:final_year_codechamps_2/services/teacher_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => StudentProvider(studentServices: StudentServices())),
-        ChangeNotifierProvider(create: (_) => TeacherProvider(teacherServices: TeacherServices())),
+        ChangeNotifierProvider(create: (_) => StudentProvider()),
+        ChangeNotifierProvider(create: (_) => TeacherProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -45,55 +42,86 @@ class DefaultPage extends StatefulWidget {
 }
 
 class _DefaultPageState extends State<DefaultPage> {
-  bool _didFetch = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Trigger data loading after widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkUserAndLoadData();
+    });
+  }
+
+  Future<void> _checkUserAndLoadData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Load data from both providers
+      final studentProvider = Provider.of<StudentProvider>(context, listen: false);
+      final teacherProvider = Provider.of<TeacherProvider>(context, listen: false);
+
+      await Future.wait([
+        studentProvider.loadStudent(),
+        teacherProvider.loadTeacher(),
+      ]);
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final studentProv = context.watch<StudentProvider>();
-    final teacherProv = context.watch<TeacherProvider>();
 
-    // 1) Not signed in → go to login
+    // If no user is logged in, show login page
     if (user == null) {
       return const LoginPage();
     }
 
-    // 2) Kick off profile fetch exactly once
-    if (!_didFetch) {
-      _didFetch = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        studentProv.refreshUser().then((_) {
-          if (!studentProv.hasProfile) {
-            teacherProv.refreshUser();
-          }
-        });
-      });
-    }
-
-    // 3) Show loading while fetching
-    if (studentProv.status == Status.loading ||
-        teacherProv.status == Status.loading ||
-        (studentProv.status == Status.idle && teacherProv.status == Status.idle)) {
+    // Initial loading
+    if (_isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // 4) Route once we have a profile
-    if (studentProv.hasProfile) {
+    // Watch providers for changes
+    final studentProv = context.watch<StudentProvider>();
+    final teacherProv = context.watch<TeacherProvider>();
+
+    // Loading indicators for individual providers
+    if (studentProv.isLoading || teacherProv.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Navigate based on which profile is available
+    if (studentProv.student != null) {
       return const StudentHome();
     }
-    if (teacherProv.hasProfile) {
+
+    if (teacherProv.teacher != null) {
       return const TeacherHome();
     }
 
-    // 5) Both failed → show error
+    // No profile found case
     return Scaffold(
       body: Center(
-        child: Text(
-          'No profile found for ${user.email}.\n'
-              'Please log in with the correct role.',
-          textAlign: TextAlign.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('No profile found'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _checkUserAndLoadData,
+              child: const Text('Retry'),
+            ),
+          ],
         ),
       ),
     );

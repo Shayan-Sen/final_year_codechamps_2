@@ -6,7 +6,7 @@ import 'package:flutter_ai_toolkit/flutter_ai_toolkit.dart';
 
 
 class ChatPage extends StatelessWidget {
-  ChatPage({super.key});
+  const ChatPage({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(

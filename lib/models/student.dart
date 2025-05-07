@@ -49,4 +49,32 @@ class Student {
       'teachers': teachers,
     };
   }
+
+  // Add JSON serialization methods for SharedPreferences caching
+
+  // Convert Student object to a JSON map
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'email': email,
+      'about': about,
+      'profileImage': profileImage,
+      'teachers': teachers,
+    };
+  }
+
+  // Create a Student object from a JSON map
+  factory Student.fromJson(Map<String, dynamic> json) {
+    return Student(
+      name: json['name'] as String,
+      email: json['email'] as String,
+      about: json['about'] as String,
+      profileImage: json['profileImage'] != null
+          ? Map<String, dynamic>.from(json['profileImage'])
+          : null,
+      teachers: json['teachers'] != null
+          ? List<String>.from(json['teachers'])
+          : [],
+    );
+  }
 }

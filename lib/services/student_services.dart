@@ -19,11 +19,16 @@ class StudentServices {
     toFirestore: (student, _) => student.toFirestore(),
   );
 
-  Future<Student> getStudent()async{
-    final user = _auth.currentUser;
-    if (user == null) throw Exception("User not found");
-    final student = (await _studentCol.doc(user.uid).get()).data()!;
-    return student;
+  Future<Student?> getStudent()async{
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return null;
+      final student = (await _studentCol.doc(user.uid).get()).data()!;
+      return student;
+    } on Exception catch (e) {
+      print("Error fetching student: $e");
+      rethrow;
+    }
   }
 
   Future<String> signup({
