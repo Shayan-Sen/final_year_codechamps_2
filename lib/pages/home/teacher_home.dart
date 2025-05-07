@@ -280,10 +280,6 @@ class _TeacherHomeState extends State<TeacherHome> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Welcome back, Ms. Johnson!',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
           SizedBox(height: 20),
           _buildSummaryCards(),
           SizedBox(height: 20),
