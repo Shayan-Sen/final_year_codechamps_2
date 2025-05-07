@@ -230,7 +230,7 @@ class _TeacherHomeState extends State<TeacherHome> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("No student data available"),
+            Text("No Teacher data available"),
             ElevatedButton(
               onPressed: () => provider.loadTeacher(),
               child: Text("Reload Data"),
