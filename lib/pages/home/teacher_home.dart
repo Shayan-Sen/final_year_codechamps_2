@@ -262,9 +262,9 @@ class _TeacherHomeState extends State<TeacherHome> {
                 const SizedBox(height: 10),
                 _card(title: 'Email', description: student.email),
                 const SizedBox(height: 10),
-                _card(title: 'Email', description: student.about),
+                _card(title: 'About', description: student.about),
                 const SizedBox(height: 10),
-                _card(title: 'About', description: student.educationQualification),
+                _card(title: 'Highest Qualification', description: student.educationQualification),
                 EducationCard(proofOfEducation: student.proofOfEducation),
                 const SizedBox(height: 10)
               ],
